@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Profile - Saudagar Farms
+</title>
+
+<style>
+
+.footer{
+padding: 20px;
+text-align: center;
+word-wrap: break-word;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+overflow-x: hidden;
+background:#f4f8f1;
+
+padding:30px;
+}
+
+.profile-box{
+
+max-width:600px;
+
+margin:auto;
+
+background:white;
+
+padding:40px;
+
+border-radius:25px;
+
+box-shadow:
+0 5px 15px rgba(0,0,0,0.1);
+}
+
+h1{
+
+text-align:center;
+
+margin-bottom:35px;
+
+color:#234b2c;
+}
+
+.info{
+
+background:#f8fbf4;
+
+padding:18px;
+
+border-radius:15px;
+
+margin-bottom:20px;
+
+font-size:18px;
+}
+
+.info b{
+color:#234b2c;
+}
+
+button{
+
+width:100%;
+
+padding:16px;
+
+border:none;
+
+border-radius:12px;
+
+font-size:18px;
+
+cursor:pointer;
+
+margin-top:15px;
+
+color:white;
+}
+
+.orders-btn{
+background:#4CAF50;
+}
+
+.logout-btn{
+background:#d62828;
+}
+
+button:hover{
+opacity:0.9;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="profile-box">
+
+<h1>
+👤 My Profile
+</h1>
+
+<div class="info">
+<b>Email:</b>
+<span id="email"></span>
+</div>
+
+<div class="info">
+
+<b>Name:</b>
+
+<input
+type="text"
+id="name"
+placeholder="Enter Your Name"
+style="
+width:100%;
+margin-top:10px;
+padding:12px;
+border-radius:10px;
+border:1px solid #ccc;
+">
+
+</div>
+
+<div class="info">
+<b>Phone:</b>
+
+<input
+type="text"
+id="phone"
+placeholder="Enter Phone Number"
+style="
+width:100%;
+margin-top:10px;
+padding:12px;
+border-radius:10px;
+border:1px solid #ccc;
+">
+</div>
+
+<div class="info">
+<b>Address:</b>
+
+<textarea
+id="address"
+placeholder="Enter Address"
+style="
+width:100%;
+margin-top:10px;
+padding:12px;
+border-radius:10px;
+border:1px solid #ccc;
+height:100px;
+"></textarea>
+</div>
+
+<div class="info">
+<b>City:</b>
+
+<input
+type="text"
+id="city"
+placeholder="Enter City"
+style="
+width:100%;
+margin-top:10px;
+padding:12px;
+border-radius:10px;
+border:1px solid #ccc;
+">
+</div>
+
+<div class="info">
+<b>Pincode:</b>
+
+<input
+type="text"
+id="pincode"
+placeholder="Enter Pincode"
+style="
+width:100%;
+margin-top:10px;
+padding:12px;
+border-radius:10px;
+border:1px solid #ccc;
+">
+</div>
+
+<button
+class="orders-btn"
+onclick="saveProfile()">
+
+💾 Save Details
+
+</button>
+
+<button
+class="orders-btn"
+onclick="goOrders()">
+
+📦 My Orders
+
+</button>
+
+<button
+class="logout-btn"
+onclick="logout()">
+
+🚪 Logout
+
+</button>
+
+</div>
+
+
+<script>
+
+/* LOGIN CHECK */
+
+const userEmail =
+localStorage.getItem(
+"userEmail"
+);
+
+if(!userEmail){
+
+window.location.href =
+"login.html";
+
+}
+
+
+/* SHOW USER */
+
+document.getElementById(
+"email"
+).innerText = userEmail;
+
+
+/* OPTIONAL NAME */
+
+const savedProfileData =
+JSON.parse(
+localStorage.getItem("profileDetails")
+);
+
+if(savedProfileData){
+
+document.getElementById("name").value =
+savedProfileData.name || "";
+
+}
+
+
+/* GO ORDERS */
+
+function goOrders(){
+
+window.location.href =
+"orders.html";
+
+}
+
+/* LOAD SAVED PROFILE */
+
+const savedProfile =
+JSON.parse(
+localStorage.getItem("profileDetails")
+);
+
+if(savedProfile){
+
+document.getElementById("phone").value =
+savedProfile.phone || "";
+
+document.getElementById("address").value =
+savedProfile.address || "";
+
+document.getElementById("city").value =
+savedProfile.city || "";
+
+document.getElementById("pincode").value =
+savedProfile.pincode || "";
+
+}
+
+
+/* SAVE PROFILE */
+
+function saveProfile(){
+
+const profileData = {
+
+name:
+document.getElementById("name").value,
+
+phone:
+document.getElementById("phone").value,
+
+address:
+document.getElementById("address").value,
+
+city:
+document.getElementById("city").value,
+
+pincode:
+document.getElementById("pincode").value
+
+};
+
+localStorage.setItem(
+"profileDetails",
+JSON.stringify(profileData)
+);
+
+alert("✅ Profile Saved");
+
+}
+
+/* LOGOUT */
+
+function logout(){
+
+localStorage.removeItem(
+"userEmail"
+);
+
+alert(
+"Logged Out Successfully"
+);
+
+window.location.href =
+"login.html";
+
+}
+
+</script>
+
+</body>
+
+</html>

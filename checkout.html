@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Checkout - Saudagar Farms
+</title>
+
+<style>
+
+.footer{
+padding: 20px;
+text-align: center;
+word-wrap: break-word;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+
+background:#f4f8f1;
+overflow-x: hidden;
+padding:30px;
+}
+
+/* TITLE */
+
+h1{
+
+text-align:center;
+
+margin-bottom:40px;
+
+color:#234b2c;
+}
+
+/* CONTAINER */
+
+.checkout-box{
+
+max-width:700px;
+
+margin:auto;
+
+background:white;
+
+padding:40px;
+
+border-radius:25px;
+
+box-shadow:
+0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* INPUTS */
+
+.input-group{
+margin-bottom:25px;
+}
+
+label{
+
+display:block;
+
+margin-bottom:10px;
+
+font-weight:bold;
+
+color:#234b2c;
+}
+
+input,
+textarea{
+
+width:100%;
+max-width: 100%;
+padding:15px;
+
+border:1px solid #ccc;
+
+border-radius:12px;
+
+font-size:16px;
+
+outline:none;
+}
+
+textarea{
+resize:none;
+}
+
+/* BUTTON */
+
+button{
+
+width:100%;
+
+padding:16px;
+
+border:none;
+
+background:#4CAF50;
+
+color:white;
+
+font-size:18px;
+
+border-radius:12px;
+
+cursor:pointer;
+
+margin-top:20px;
+}
+
+button:hover{
+background:#2e8b57;
+}
+
+/* TOTAL */
+
+.total{
+
+text-align:center;
+
+font-size:28px;
+
+margin-bottom:30px;
+
+color:#4CAF50;
+
+font-weight:bold;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.checkout-box{
+padding:25px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>
+🚚 Delivery Details
+</h1>
+
+<div class="checkout-box">
+
+<div
+class="total"
+id="totalAmount">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Full Name
+</label>
+
+<input
+type="text"
+id="name"
+placeholder="Enter Full Name">
+
+</div>
+
+
+<div class="input-group">
+
+<label>
+Phone Number
+</label>
+
+<input
+type="tel"
+id="phone"
+maxlength="10"
+placeholder="Enter Phone Number">
+
+</div>
+
+
+<div class="input-group">
+
+<label>
+Delivery Address
+</label>
+
+<textarea
+id="address"
+rows="4"
+placeholder="Enter Full Address"></textarea>
+
+</div>
+
+
+<div class="input-group">
+
+<label>
+City
+</label>
+
+<input
+type="text"
+id="city"
+placeholder="Enter City">
+
+</div>
+
+
+<div class="input-group">
+
+<label>
+Pincode
+</label>
+
+<input
+type="text"
+id="pincode"
+maxlength="6"
+placeholder="Enter Pincode">
+
+</div>
+
+
+<button onclick="continuePayment()">
+
+Continue To Payment 💳
+
+</button>
+
+</div>
+
+
+<script>
+
+/* ========================= */
+/* LOGIN CHECK */
+/* ========================= */
+
+const userEmail =
+localStorage.getItem(
+"userEmail"
+);
+
+if(!userEmail){
+
+alert(
+"Please Login First"
+);
+
+window.location.href =
+"login.html";
+
+}
+
+
+/* ========================= */
+/* TOTAL */
+/* ========================= */
+
+let cart =
+JSON.parse(
+localStorage.getItem("cart")
+) || [];
+
+let total = 0;
+
+cart.forEach(item=>{
+
+total +=
+item.price *
+item.quantity;
+
+});
+
+
+
+const grandTotal =
+total ;
+
+if(cart.length === 0){
+
+alert("Cart Is Empty");
+
+window.location.href = "index.html";
+
+}
+
+
+/* SHOW TOTAL */
+
+document.getElementById(
+"totalAmount"
+).innerText =
+
+`Total Amount: ₹${grandTotal}`;
+
+
+/* SAVE TOTAL */
+
+localStorage.setItem(
+"totalAmount",
+grandTotal
+);
+
+
+const savedProfile =
+JSON.parse(
+localStorage.getItem("profileDetails")
+);
+
+if(savedProfile){
+
+document.getElementById("name").value =
+savedProfile.name || "";
+
+document.getElementById("phone").value =
+savedProfile.phone || "";
+
+document.getElementById("address").value =
+savedProfile.address || "";
+
+document.getElementById("city").value =
+savedProfile.city || "";
+
+document.getElementById("pincode").value =
+savedProfile.pincode || "";
+
+}
+
+
+/* ========================= */
+/* CONTINUE */
+/* ========================= */
+
+function continuePayment(){
+
+
+
+const name =
+document.getElementById(
+"name"
+).value;
+
+const phone =
+document.getElementById(
+"phone"
+).value;
+
+const address =
+document.getElementById(
+"address"
+).value;
+
+const city =
+document.getElementById(
+"city"
+).value;
+
+const pincode =
+document.getElementById(
+"pincode"
+).value;
+
+
+/* VALIDATION */
+
+if(
+name === "" ||
+phone === "" ||
+address === "" ||
+city === "" ||
+pincode === ""
+){
+
+alert(
+"Please Fill All Details"
+);
+
+return;
+
+}
+
+
+/* SAVE DELIVERY */
+
+const deliveryDetails = {
+
+name,
+phone,
+address,
+city,
+pincode
+
+};
+
+
+localStorage.setItem(
+"deliveryDetails",
+JSON.stringify(deliveryDetails)
+);
+
+
+/* REDIRECT */
+
+window.location.href =
+"payment.html";
+
+}
+
+</script>
+
+</body>
+</html>

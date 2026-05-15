@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Payment - Saudagar Farms
+</title>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<style>
+
+.footer{
+padding: 20px;
+text-align: center;
+word-wrap: break-word;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+overflow-x: hidden;
+background:#f4f8f1;
+
+padding:30px;
+}
+
+/* TITLE */
+
+h1{
+
+text-align:center;
+
+margin-bottom:40px;
+
+color:#234b2c;
+}
+
+/* BOX */
+
+.payment-box{
+
+max-width:600px;
+width: 100%;
+margin:auto;
+
+background:white;
+
+padding:40px;
+
+border-radius:25px;
+
+box-shadow:
+0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* TOTAL */
+
+.total{
+
+text-align:center;
+
+font-size:30px;
+
+font-weight:bold;
+
+color:#4CAF50;
+
+margin-bottom:30px;
+}
+
+/* BUTTONS */
+
+button{
+
+width:100%;
+
+max-width: 100%;
+
+padding:16px;
+
+border:none;
+
+border-radius:12px;
+
+font-size:18px;
+
+cursor:pointer;
+
+margin-bottom:20px;
+
+color:white;
+}
+
+.online{
+background:#4CAF50;
+}
+
+.cod{
+background:#ff9800;
+}
+
+button:hover{
+opacity:0.9;
+}
+
+/* INFO */
+
+.info{
+
+background:#f1f7eb;
+
+padding:20px;
+
+border-radius:15px;
+
+margin-bottom:30px;
+
+line-height:1.8;
+}
+
+</style>
+
+<script
+type="text/javascript"
+src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+
+</head>
+
+<body>
+
+<h1>
+💳 Payment
+</h1>
+
+<div class="payment-box">
+
+<div
+class="total"
+id="amount">
+
+</div>
+
+<div
+class="info"
+id="deliveryInfo">
+
+</div>
+
+<button
+class="online"
+onclick="payOnline()">
+
+Pay Online
+
+</button>
+
+<button
+class="cod"
+onclick="cashOnDelivery()">
+
+Cash On Delivery
+
+</button>
+
+</div>
+
+
+<script type="module">
+emailjs.init("tsuIfbhYNeN7-ztWO");
+
+import { db }
+from './js/firebase.js';
+
+import {
+
+collection,
+addDoc
+
+}
+
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+/* ========================= */
+/* LOGIN CHECK */
+/* ========================= */
+
+const userEmail =
+localStorage.getItem(
+"userEmail"
+);
+
+if(!userEmail){
+
+window.location.href =
+"login.html";
+
+}
+
+
+/* ========================= */
+/* GET DATA */
+/* ========================= */
+
+const cart =
+JSON.parse(
+localStorage.getItem("cart")
+) || [];
+
+if(cart.length === 0){
+
+alert("Cart Is Empty");
+
+window.location.href = "index.html";
+
+}
+
+
+const totalAmount =
+localStorage.getItem(
+"totalAmount"
+);
+
+
+const delivery =
+JSON.parse(
+localStorage.getItem(
+"deliveryDetails"
+)) || {};
+
+
+/* SHOW DATA */
+
+document.getElementById(
+"amount"
+).innerText =
+
+`Total: ₹${totalAmount}`;
+
+
+document.getElementById(
+"deliveryInfo"
+).innerHTML =
+
+`
+<b>Name:</b> ${delivery.name}<br>
+<b>Phone:</b> ${delivery.phone}<br>
+<b>Address:</b> ${delivery.address}<br>
+<b>City:</b> ${delivery.city}<br>
+<b>Pincode:</b> ${delivery.pincode}
+`;
+
+
+/* ========================= */
+/* SAVE ORDER */
+/* ========================= */
+
+async function saveOrder(
+paymentType,
+paymentId
+){
+
+await addDoc(
+collection(db,"orders"),
+{
+
+user:userEmail,
+
+products:cart,
+
+total:Number(totalAmount),
+
+deliveryDetails:delivery,
+
+paymentMethod:paymentType,
+
+paymentId:paymentId,
+
+status:"Pending",
+
+createdAt: new Date()
+
+}
+);
+
+/* SEND EMAIL */
+
+await emailjs.send(
+"service_2qp1qej",
+"template_8acc2dh",
+{
+name: delivery.name,
+amount: totalAmount,
+payment: paymentType,
+email: userEmail
+}
+);
+
+/* CLEAR */
+
+localStorage.removeItem(
+"cart"
+);
+
+localStorage.setItem(
+"lastOrder",
+JSON.stringify(cart)
+);
+
+localStorage.setItem(
+"lastTotal",
+totalAmount
+);
+
+//localStorage.removeItem(
+//"deliveryDetails"
+//);
+
+localStorage.removeItem(
+"totalAmount"
+);
+
+/* ADMIN EMAIL */
+
+emailjs.send(
+
+"service_2qp1qej",
+
+"template_m6h1w0o",
+
+{
+
+admin_email:"saudagarfarms@gmail.com",
+
+customer_name:
+delivery.name,
+
+customer_phone:
+delivery.phone,
+
+customer_address:
+delivery.address,
+
+total_amount:
+totalAmount,
+
+payment_method:
+paymentType
+
+}
+
+);
+
+alert(
+"✅ Order Placed Successfully"
+);
+
+
+window.location.href =
+"invoice.html";
+
+}
+
+
+/* ========================= */
+/* ONLINE PAYMENT */
+/* ========================= */
+
+window.payOnline = 
+async function(){
+
+let response;
+
+try{
+
+response = await fetch("http://127.0.0.1:8000/create-order", {
+
+method: "POST",
+
+headers: {
+"Content-Type": "application/json"
+},
+
+body: JSON.stringify({
+amount: totalAmount
+})
+
+});
+
+}
+
+catch(error){
+
+alert("Backend Server Not Running ❌");
+
+console.log(error);
+
+return;
+
+}
+
+const order = await response.json();
+
+const options = {
+key: "rzp_test_Sp8cEV0iWpweoq",
+amount: order.amount,
+currency: "INR",
+name: "Saudagar Farms",
+description: "Farm Order Payment",
+order_id: order.id,
+
+/* 🔥 ONLY HANDLER CHANGED */
+handler: async function (response) {
+
+const verifyRes = await fetch("http://127.0.0.1:8000/verify-payment", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+razorpay_payment_id: response.razorpay_payment_id,
+razorpay_order_id: response.razorpay_order_id,
+razorpay_signature: response.razorpay_signature
+})
+});
+
+const result = await verifyRes.json();
+
+if(result.success){
+
+await saveOrder(
+"ONLINE",
+response.razorpay_payment_id
+);
+
+} else {
+alert("❌ Payment verification failed");
+}
+
+},
+
+theme: {
+color: "#4CAF50"
+}
+};
+
+const rzp = new Razorpay(options);
+rzp.open();
+}
+
+/* ========================= */
+/* COD */
+/* ========================= */
+
+window.cashOnDelivery =
+async function(){
+
+await saveOrder(
+"COD",
+"COD_" + Date.now()
+);
+
+}
+
+</script>
+
+</body>
+</html>

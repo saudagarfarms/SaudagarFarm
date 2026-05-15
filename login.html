@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Saudagar Farms Login</title>
+
+<style>
+
+.footer{
+padding: 20px;
+text-align: center;
+word-wrap: break-word;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:
+linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),
+url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1974&auto=format&fit=crop');
+background-size:cover;
+background-position:center;
+overflow-x: hidden;
+}
+
+.container{
+width:400px;
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(10px);
+padding:40px;
+border-radius:20px;
+color:white;
+}
+
+h1{text-align:center;margin-bottom:30px;color:#ffcc70;}
+
+input{
+width:100%;
+padding:14px;
+margin:10px 0;
+border:none;
+border-radius:10px;
+outline:none;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:15px;
+border:none;
+border-radius:10px;
+background:#2e8b57;
+color:white;
+font-size:18px;
+cursor:pointer;
+}
+
+button:hover{background:#246b45;}
+
+.toggle{
+text-align:center;
+margin-top:20px;
+cursor:pointer;
+color:#ffcc70;
+}
+
+.msg{
+text-align:center;
+margin-top:15px;
+color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🌿 Saudagar Farms</h1>
+
+<input type="email" id="email" placeholder="Enter Email">
+<input type="password" id="password" placeholder="Enter Password">
+
+<button id="authBtn">Login</button>
+
+<button onclick="googleLogin()" style="background:#4285F4;">
+🔵 Continue with Google
+</button>
+
+<div class="toggle" id="toggleText">
+Don't have an account? Signup
+</div>
+
+<div class="msg" id="msg"></div>
+
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { auth, db } from "./js/firebase.js";
+
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  doc,
+  getDoc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+let isLogin = true;
+
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const authBtn = document.getElementById("authBtn");
+const toggleText = document.getElementById("toggleText");
+const msg = document.getElementById("msg");
+
+/* TOGGLE */
+toggleText.addEventListener("click", () => {
+  isLogin = !isLogin;
+
+  authBtn.innerText = isLogin ? "Login" : "Signup";
+  toggleText.innerText = isLogin
+    ? "Don't have an account? Signup"
+    : "Already have an account? Login";
+});
+
+/* EMAIL LOGIN/SIGNUP */
+authBtn.addEventListener("click", async () => {
+  const userEmail = email.value.trim();
+  const userPassword = password.value.trim();
+
+  if (!userEmail || !userPassword) {
+    msg.innerText = "⚠ Please Fill All Fields";
+    return;
+  }
+
+  try {
+    if (isLogin) {
+      await signInWithEmailAndPassword(auth, userEmail, userPassword);
+      msg.innerText = "Login Successful";
+
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 1000);
+
+    } else {
+      await createUserWithEmailAndPassword(auth, userEmail, userPassword);
+      msg.innerText = "Signup Successful";
+
+      isLogin = true;
+      authBtn.innerText = "Login";
+      toggleText.innerText = "Don't have an account? Signup";
+    }
+  } catch (err) {
+    msg.innerText = err.message;
+  }
+});
+
+/* SESSION */
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    localStorage.setItem("userEmail", user.email);
+  }
+});
+
+/* GOOGLE LOGIN */
+const provider = new GoogleAuthProvider();
+
+async function googleLogin() {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    let role = "user";
+
+    if (!userSnap.exists()) {
+      await setDoc(userRef, {
+        email: user.email,
+        role: "user",
+        createdAt: new Date()
+      });
+    } else {
+      role = userSnap.data().role;
+    }
+
+    localStorage.setItem("userEmail", user.email);
+    localStorage.setItem("userRole", role);
+    localStorage.setItem("userId", user.uid);
+
+    window.location.href = role === "admin" ? "admin.html" : "index.html";
+
+  } catch (error) {
+    console.log(error);
+    alert("Google Login Failed ❌");
+  }
+}
+
+
+window.googleLogin = googleLogin;
+</script>
+</body>
+</html>

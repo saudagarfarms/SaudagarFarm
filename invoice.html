@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Invoice - Saudagar Farms
+</title>
+
+<style>
+
+.footer{
+padding: 20px;
+text-align: center;
+word-wrap: break-word;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f4f8f1;
+padding:30px;
+overflow-x: hidden;
+}
+
+.invoice{
+
+max-width:800px;
+
+margin:auto;
+
+background:white;
+
+padding:40px;
+
+border-radius:25px;
+
+box-shadow:
+0 5px 15px rgba(0,0,0,0.1);
+}
+
+h1{
+
+text-align:center;
+
+margin-bottom:30px;
+
+color:#234b2c;
+}
+
+.top{
+margin-bottom:30px;
+line-height:1.8;
+}
+
+.products{
+margin-top:25px;
+}
+
+.item{
+
+display:flex;
+
+justify-content:space-between;
+
+padding:15px 0;
+
+border-bottom:
+1px solid #ddd;
+}
+
+.total{
+
+margin-top:30px;
+
+font-size:28px;
+
+font-weight:bold;
+
+text-align:right;
+
+color:#2e8b57;
+}
+
+button{
+
+margin-top:30px;
+
+padding:15px 25px;
+
+border:none;
+
+background:#4CAF50;
+
+color:white;
+
+font-size:18px;
+
+border-radius:12px;
+
+cursor:pointer;
+}
+
+.home-btn{
+background:#4CAF50;
+margin-top:15px;
+}
+
+.home-btn:hover{
+background:#2e8b57;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="invoice">
+
+<h1>
+🧾 Saudagar Farms Invoice
+</h1>
+
+<div
+class="top"
+id="customerInfo">
+
+</div>
+
+<div
+class="products"
+id="products">
+
+</div>
+
+<div
+class="total"
+id="total">
+
+</div>
+
+<button onclick="window.print()">
+
+🖨 Print Invoice
+
+</button>
+
+<button onclick="goHome()" class="home-btn">
+🏡 Back To Home
+</button>
+
+</div>
+
+<script>
+
+/* DATA */
+
+const cart =
+JSON.parse(
+localStorage.getItem("lastOrder")
+) || [];
+
+const delivery =
+JSON.parse(
+localStorage.getItem("deliveryDetails")
+) || {};
+
+const total =
+localStorage.getItem(
+"lastTotal"
+) || 0;
+
+
+/* CUSTOMER */
+
+document.getElementById(
+"customerInfo"
+).innerHTML = `
+
+<b>Name:</b>
+${delivery.name}<br><br>
+
+<b>Phone:</b>
+${delivery.phone}<br><br>
+
+<b>Address:</b>
+${delivery.address}<br><br>
+
+<b>City:</b>
+${delivery.city}<br><br>
+
+<b>Pincode:</b>
+${delivery.pincode}<br><br>
+
+<b>Date:</b>
+${new Date().toLocaleString()}
+
+`;
+
+
+/* PRODUCTS */
+
+let html = "";
+
+cart.forEach((item)=>{
+
+html += `
+
+<div class="item">
+
+<div>
+
+${item.name}
+(Qty:
+${item.quantity})
+
+</div>
+
+<div>
+
+₹${item.price * item.quantity}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById(
+"products"
+).innerHTML = html;
+
+
+/* TOTAL */
+
+document.getElementById(
+"total"
+).innerText =
+
+`Grand Total: ₹${total}`;
+
+function goHome(){
+
+window.location.href =
+"index.html";
+
+}
+
+</script>
+
+</body>
+
+</html>

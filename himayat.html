@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Himayat Mango
+</title>
+
+<style>
+
+.footer{
+padding: 20px;
+text-align: center;
+word-wrap: break-word;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+overflow-x: hidden;
+margin:0;
+
+font-family:Poppins;
+
+background:
+
+linear-gradient(
+rgba(0,0,0,0.5),
+rgba(0,0,0,0.5)
+),
+url('himayat.png');
+
+background-repeat:no-repeat;
+background-position:center;
+background-size:cover;
+background-attachment:fixed;
+min-height:100vh;
+}
+
+/* HEADER */
+
+header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+color:white;
+
+padding:20px 40px;
+}
+
+.cart{
+
+font-size:30px;
+
+text-decoration:none;
+
+color:white;
+}
+
+/* CONTAINER */
+
+.container{
+margin-top:70px;
+}
+
+/* BOX */
+
+.box{
+
+background:rgba(0,0,0,0.65);
+
+padding:35px;
+
+width:380px;
+
+margin:auto;
+
+border-radius:25px;
+
+color:white;
+
+backdrop-filter:blur(5px);
+}
+
+h2{
+
+font-size:35px;
+
+margin-bottom:20px;
+
+color:white;
+
+text-shadow:
+2px 2px 10px rgba(0,0,0,0.9);
+
+}
+
+.price{
+
+font-size:28px;
+
+color:#90ee90;
+
+margin:20px 0;
+}
+
+/* INPUT */
+
+input{
+
+padding:12px;
+
+width:80%;
+
+margin:15px 0;
+
+border:none;
+
+border-radius:10px;
+
+font-size:18px;
+
+text-align:center;
+}
+
+/* TOTAL */
+
+.total{
+
+margin-top:15px;
+
+font-size:25px;
+
+color:#ffeb3b;
+}
+
+/* BUTTON */
+
+button{
+
+padding:14px 25px;
+
+background:#ff9800;
+
+border:none;
+
+color:white;
+
+border-radius:12px;
+
+cursor:pointer;
+
+font-size:18px;
+
+margin-top:20px;
+
+font-weight:bold;
+}
+
+button:hover{
+background:#e68900;
+}
+
+/* MESSAGE */
+
+#msg{
+margin-top:20px;
+font-size:18px;
+color:#90ee90;
+}
+
+/* MOBILE */
+
+@media(max-width:500px){
+
+.box{
+width:90%;
+max-width: 380px;
+}
+
+}
+
+@media(max-width:768px){
+
+body{
+
+background-attachment:scroll;
+
+background-position:center;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h2>
+🌿 Saudagar Farms
+</h2>
+
+<a href="cart.html" class="cart">
+🛒
+</a>
+
+</header>
+
+
+<div class="container">
+
+<div class="box">
+
+<h2>
+👑 Himayat Mango
+</h2>
+
+<p>
+
+Himayat mango (Imam Pasand) is famous
+for its royal taste, rich aroma and
+extremely juicy pulp directly from
+our farms 🌱
+
+</p>
+
+<p style="color:#90ee90;">
+
+🚚 FREE delivery on 25KG+ orders within 5KM radius<br>
+
+</p>
+
+
+
+<div class="price" id="price">
+
+Loading...
+
+</div>
+
+
+<input
+type="number"
+id="qty"
+value="5"
+min="5"
+max="100">
+
+
+<div
+class="total"
+id="totalPrice">
+
+Total:
+₹1100
+
+</div>
+
+<p style="color:#90ee90;">
+📍 Beyond 5KM:
+₹12/KM charges apply
+</p>
+
+<button onclick="addToCart()">
+
+Add To Cart
+
+</button>
+
+
+<p id="msg"></p>
+
+</div>
+
+</div>
+
+
+<script type="module">
+
+import { db }
+from './js/firebase.js';
+
+import {
+collection,
+getDocs
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ========================= */
+/* LOGIN CHECK */
+/* ========================= */
+
+const userEmail =
+localStorage.getItem(
+"userEmail"
+);
+
+if(!userEmail){
+
+alert(
+"Please Login First"
+);
+
+window.location.href =
+"login.html";
+
+}
+
+
+/* ========================= */
+/* PRICE */
+/* ========================= */
+
+let pricePerKg = 0;
+
+const qtyInput =
+document.getElementById(
+"qty"
+);
+
+const totalPrice =
+document.getElementById(
+"totalPrice"
+);
+
+async function loadPrice(){
+
+const querySnapshot =
+await getDocs(collection(db,"products"));
+
+querySnapshot.forEach((doc)=>{
+
+const product = doc.data();
+
+if(
+product.name.toLowerCase().includes("himayat")
+){
+
+pricePerKg = product.price;
+
+document.getElementById(
+"price"
+).innerText = `₹${pricePerKg}/kg`;
+
+const qty =
+parseInt(qtyInput.value);
+
+totalPrice.innerText =
+`Total: ₹${qty * pricePerKg}`;
+
+}
+
+});
+
+}
+
+loadPrice();
+
+
+/* UPDATE TOTAL */
+
+qtyInput.addEventListener(
+"input",
+()=>{
+
+let qty =
+parseInt(qtyInput.value);
+
+
+/* MIN */
+
+if(qty < 5){
+
+alert(
+"Minimum Quantity is 5KG"
+);
+
+qty = 5;
+
+}
+
+
+/* MAX */
+
+if(qty > 100){
+
+alert(
+"Maximum Quantity Reached"
+);
+
+qty = 100;
+
+}
+
+
+/* UPDATE INPUT */
+
+qtyInput.value = qty;
+
+
+/* UPDATE TOTAL */
+
+totalPrice.innerText =
+`Total: ₹${qty * pricePerKg}`;
+
+}
+);
+
+
+/* ========================= */
+/* ADD TO CART */
+/* ========================= */
+
+window.addToCart = function(){
+
+let qty =
+parseInt(qtyInput.value);
+
+
+/* VALIDATION */
+
+if(qty < 5){
+
+alert(
+"Minimum 5KG Required"
+);
+
+return;
+
+}
+
+if(qty > 100){
+
+alert(
+"Maximum 100KG Allowed"
+);
+
+return;
+
+}
+
+
+/* CART */
+
+let cart =
+JSON.parse(
+localStorage.getItem("cart")
+) || [];
+
+
+/* PUSH ITEM */
+
+cart.push({
+
+name:"Himayat Mango",
+
+price:pricePerKg,
+
+image:"https://media.assettype.com/homegrown%2F2024-06%2F6d9d6d7e-8d42-46d6-bd6c-0ddf2e3a8f9c%2Fimam_pasand_mango.jpg",
+
+quantity:qty,
+
+category:"Mangoes"
+
+});
+
+
+/* SAVE */
+
+localStorage.setItem(
+"cart",
+JSON.stringify(cart)
+);
+
+
+/* SHIPPING MSG */
+
+if(qty >= 25){
+
+document.getElementById(
+"msg"
+).innerText =
+
+"✅ Free Shipping Claimed";
+
+}else{
+
+document.getElementById(
+"msg"
+).innerText =
+
+"Add More For Free Shipping";
+
+}
+
+
+alert(
+"✅ Added To Cart"
+);
+
+}
+
+</script>
+
+</body>
+</html>

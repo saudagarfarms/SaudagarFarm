@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8" />
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0"/>
+
+<title>
+Saudagar Farms Admin Panel
+</title>
+
+<style>
+
+.table-wrapper{
+overflow-x: auto;
+width: 100%;
+}
+
+.stats{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+
+gap:20px;
+
+margin-bottom:40px;
+}
+
+.card{
+
+background:white;
+
+padding:30px;
+
+border-radius:20px;
+
+text-align:center;
+
+box-shadow:
+0 5px 15px rgba(0,0,0,0.08);
+}
+
+.card h2{
+font-size:35px;
+color:#2e8b57;
+margin-bottom:10px;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+html{
+scroll-behavior: smooth;
+}
+
+
+
+body{
+background:#f4f8f1;
+overflow-x: hidden;
+display:flex;
+margin: 0;
+padding: 0;
+
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+height:100vh;
+
+background:
+linear-gradient(
+to bottom,
+#1d4d2c,
+#2f6d3c,
+#6d9f3d
+);
+
+color:white;
+padding:25px;
+
+position:fixed;
+overflow-y:auto;
+}
+
+.logo{
+text-align:center;
+margin-bottom:40px;
+}
+
+.logo h1{
+font-size:30px;
+color:#ffdd75;
+}
+
+.logo p{
+color:#d7f7d0;
+margin-top:5px;
+}
+
+.menu{
+list-style:none;
+}
+
+.menu li{
+margin:18px 0;
+}
+
+.menu a{
+text-decoration:none;
+color:white;
+font-size:17px;
+display:block;
+padding:12px 15px;
+border-radius:12px;
+transition:0.3s;
+}
+
+.menu a:hover{
+background:#ffdd75;
+color:#234b2c;
+transform:translateX(5px);
+}
+
+.container{
+margin:auto;
+width:100%;
+padding:15px;
+max-width: 1200px;
+}
+
+/* MAIN */
+
+.main{
+margin-left:260px;
+width:100%;
+padding:30px;
+}
+
+/* TOPBAR */
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.topbar h2{
+color:#234b2c;
+font-size:32px;
+}
+
+.admin-box{
+background:white;
+padding:10px 20px;
+border-radius:15px;
+
+box-shadow:
+0 4px 10px rgba(0,0,0,0.1);
+
+font-weight:bold;
+color:#234b2c;
+}
+
+/* CARDS */
+
+.cards{
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+
+gap:20px;
+margin-bottom:40px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:20px;
+
+box-shadow:
+0 5px 15px rgba(0,0,0,0.08);
+
+position:relative;
+overflow:hidden;
+}
+
+.card::before{
+content:"";
+
+position:absolute;
+
+width:100px;
+height:100px;
+
+background:
+rgba(109,159,61,0.1);
+
+border-radius:50%;
+
+top:-30px;
+right:-30px;
+}
+
+.card h3{
+color:#4b7a2f;
+margin-bottom:10px;
+}
+
+.card p{
+font-size:32px;
+font-weight:bold;
+color:#234b2c;
+}
+
+/* SECTION */
+
+.section{
+background:white;
+padding:25px;
+border-radius:20px;
+margin-bottom:30px;
+
+box-shadow:
+0 4px 12px rgba(0,0,0,0.08);
+}
+
+.section h2{
+margin-bottom:20px;
+color:#234b2c;
+}
+
+/* BUTTONS */
+
+.btn{
+padding:12px 18px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+transition:0.3s;
+margin:5px;
+color:white;
+}
+
+.add{
+background:#4CAF50;
+}
+
+.edit{
+background:#ffb703;
+}
+
+.delete{
+background:#d62828;
+}
+
+.pending{
+background:#fb8500;
+}
+
+.delivered{
+background:#2a9d8f;
+}
+
+.out{
+background:#3a86ff;
+}
+
+.btn:hover{
+transform:scale(1.05);
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+table th{
+background:#4b7a2f;
+color:white;
+padding:14px;
+text-align:left;
+}
+
+table td{
+padding:14px;
+border-bottom:1px solid #ddd;
+}
+
+table tr:hover{
+background:#f1f7eb;
+}
+
+/* FORM */
+
+.form-group{
+margin-bottom:20px;
+}
+
+.form-group label{
+display:block;
+margin-bottom:8px;
+color:#234b2c;
+font-weight:bold;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+
+width:100%;
+padding:14px;
+
+border:1px solid #ccc;
+border-radius:10px;
+outline:none;
+}
+
+/* REVENUE */
+
+.revenue{
+height:250px;
+border-radius:20px;
+
+background:
+linear-gradient(
+135deg,
+#4CAF50,
+#6d9f3d,
+#ffdd75
+);
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+color:white;
+font-size:35px;
+font-weight:bold;
+}
+
+/* MODAL */
+
+#orderModal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+.main-content{
+flex: 1;
+padding: 30px;
+overflow-y: auto;
+height: 100vh;
+}
+.modal-content{
+width: 90%;
+max-width: 500px;
+
+overflow-y: auto;
+max-height: 90vh;
+}
+
+.modal-box{
+background:white;
+padding:30px;
+width:90%;
+max-width:600px;
+border-radius:20px;
+position:relative;
+max-height:90vh;
+overflow:auto;
+}
+
+.close-btn{
+position:absolute;
+top:15px;
+right:15px;
+background:red;
+color:white;
+border:none;
+padding:8px 12px;
+border-radius:8px;
+cursor:pointer;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.sidebar{
+width:100%;
+height:auto;
+position:relative;
+}
+
+.main{
+margin-left:0;
+padding: 15px;
+width: 100%;
+}
+
+.topbar{
+flex-direction: column;
+align-items: flex-start;
+gap: 15px;
+}
+
+.cards{
+grid-template-columns: 1fr;
+}
+
+body{
+flex-direction:column;
+}
+
+}
+
+.footer{
+padding: 20px;
+text-align: center;
+word-wrap: break-word;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">
+<h1>🌿 Saudagar Farms</h1>
+<p>Admin Panel</p>
+</div>
+
+<ul class="menu">
+
+<li>
+<a href="#">🏡 Dashboard</a>
+</li>
+
+<li>
+<a href="#">🥭 Product Management</a>
+</li>
+
+<li>
+<a href="#">📦 Orders</a>
+</li>
+
+<li>
+<a href="#">💰 Revenue</a>
+</li>
+
+</ul>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="topbar">
+
+<h2>
+Farm Admin Dashboard
+</h2>
+
+<div class="admin-box">
+Welcome Admin 👨‍🌾
+</div>
+
+</div>
+
+<!-- CARDS -->
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Orders</h3>
+<p id="totalOrders">0</p>
+</div>
+
+
+
+<div class="card">
+<h3>Total Products</h3>
+<p id="totalProducts">0</p>
+</div>
+
+<div class="card">
+<h3>Pending Orders</h3>
+<p id="pendingOrders">0</p>
+</div>
+
+</div>
+
+<!-- PRODUCT MANAGEMENT -->
+
+<div class="section">
+
+<h2>🥭 Product Management</h2>
+
+<div class="form-group">
+<label>Product Name</label>
+<input type="text" id="name">
+</div>
+
+<div class="form-group">
+<label>Category</label>
+
+<select id="category">
+<option>Mangoes</option>
+<option>Goats</option>
+<option>Farm Product</option>
+</select>
+
+</div>
+
+<div class="form-group">
+<label>Description</label>
+<textarea rows="4" id="description"></textarea>
+</div>
+
+<div class="form-group">
+<label>Price</label>
+<input type="number" id="price">
+</div>
+
+<div class="form-group">
+<label>Image URL</label>
+<input type="text" id="image">
+</div>
+
+<button class="btn add" id="uploadBtn">
+Upload Product
+</button>
+
+<div class="table-wrapper" style="overflow-x: auto;">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Product</th>
+<th>Category</th>
+<th>Price</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody id="productsTable">
+
+</tbody>
+
+</table>
+</div>
+</div>
+
+
+
+
+
+<!-- ORDERS -->
+
+<div class="section">
+
+<h2>📦 Order Management</h2>
+
+<div class="table-wrapper" style="overflow-x: auto;">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Customer</th>
+<th>Total</th>
+<th>Status</th>
+<th>Date</th>
+<th>Actions</th>
+</tr>
+
+</thead>
+
+<tbody id="ordersTable">
+
+</tbody>
+
+</table>
+</div>
+
+</div>
+
+<!-- REVENUE -->
+
+
+
+</div>
+
+</div>
+
+<!-- MODAL -->
+
+<div id="orderModal">
+
+<div class="modal-box">
+
+<button
+class="close-btn"
+onclick="closeModal()">
+X
+</button>
+
+<h2 style="margin-bottom:20px;color:#234b2c;">
+📦 Order Details
+</h2>
+
+<div id="modalContent"></div>
+
+</div>
+
+</div>
+
+<!-- FIREBASE -->
+
+<script type="module">
+
+import { auth, db }
+from "./js/firebase.js";
+
+import {
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+collection,
+addDoc,
+getDocs,
+deleteDoc,
+doc,
+updateDoc,
+onSnapshot,
+getDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ========================= */
+/* ADMIN SECURITY */
+/* ========================= */
+
+onAuthStateChanged(auth, async(user)=>{
+
+if(!user){
+
+window.location.href = "login.html";
+return;
+
+}
+
+const userRef =
+doc(db,"users",user.uid);
+
+const userSnap =
+await getDoc(userRef);
+
+if(!userSnap.exists()){
+
+alert("Access Denied 🚫");
+
+window.location.href =
+"index.html";
+
+return;
+
+}
+
+const role =
+userSnap.data().role;
+
+if(role !== "admin"){
+
+alert("Admin Only 🚫");
+
+window.location.href =
+"index.html";
+
+return;
+
+}
+
+});
+
+/* ========================= */
+/* PRODUCTS */
+/* ========================= */
+
+const productsTable =
+document.getElementById("productsTable");
+
+document.getElementById(
+"uploadBtn"
+).addEventListener(
+"click",
+uploadProduct
+);
+
+async function uploadProduct(){
+
+const name =
+document.getElementById("name").value;
+
+const category =
+document.getElementById("category").value;
+
+const description =
+document.getElementById("description").value;
+
+const price =
+document.getElementById("price").value;
+
+const image =
+document.getElementById("image").value;
+
+if(
+!name ||
+!description ||
+!price ||
+!image
+){
+
+alert("Fill All Fields");
+return;
+
+}
+
+await addDoc(
+collection(db,"products"),
+{
+name,
+category,
+description,
+price:Number(price),
+image,
+status:"Available"
+}
+);
+
+alert("✅ Product Uploaded");
+
+loadProducts();
+
+}
+
+async function loadProducts(){
+
+const querySnapshot =
+await getDocs(
+collection(db,"products")
+);
+
+productsTable.innerHTML = "";
+
+let totalProducts = 0;
+
+querySnapshot.forEach((docSnap)=>{
+
+const product =
+docSnap.data();
+
+totalProducts++;
+
+productsTable.innerHTML += `
+
+<tr>
+
+<td>${product.name}</td>
+
+<td>${product.category}</td>
+
+<td>₹${product.price}</td>
+
+<td>${product.status}</td>
+
+<td>
+
+<button
+class="btn edit"
+onclick="editPrice('${docSnap.id}')">
+
+Edit
+
+</button>
+
+<button
+class="btn delete"
+onclick="deleteProduct('${docSnap.id}')">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById(
+"totalProducts"
+).innerText =
+totalProducts;
+
+}
+
+window.deleteProduct =
+async function(id){
+
+await deleteDoc(
+doc(db,"products",id)
+);
+
+loadProducts();
+
+}
+
+window.editPrice =
+async function(id){
+
+const newPrice =
+prompt("Enter New Price");
+
+if(!newPrice) return;
+
+await updateDoc(
+doc(db,"products",id),
+{
+price:Number(newPrice)
+}
+);
+
+loadProducts();
+
+}
+
+/* ========================= */
+/* ORDERS */
+/* ========================= */
+
+const ordersTable =
+document.getElementById("ordersTable");
+
+let totalRevenue = 0;
+let previousOrdersCount = 0;
+
+onSnapshot(
+collection(db,"orders"),
+
+(snapshot)=>{
+
+ordersTable.innerHTML = "";
+
+let totalOrders = 0;
+let pendingOrders = 0;
+let deliveredOrders = 0;
+
+totalRevenue = 0;
+
+const currentOrders =
+snapshot.docs.length;
+
+if(
+previousOrdersCount !== 0 &&
+currentOrders > previousOrdersCount
+){
+
+alert("🛒 New Order Received!");
+
+}
+
+previousOrdersCount =
+currentOrders;
+
+snapshot.forEach((docSnap)=>{
+
+const order =
+docSnap.data();
+
+const orderId =
+docSnap.id;
+
+totalOrders++;
+
+if(order.status !== "Delivered"){
+pendingOrders++;
+}
+
+if(order.status === "Delivered"){
+deliveredOrders++;
+}
+
+totalRevenue +=
+order.total || 0;
+
+const date =
+order.createdAt
+? new Date(
+order.createdAt.seconds * 1000
+).toLocaleString()
+: "N/A";
+
+ordersTable.innerHTML += `
+
+<tr>
+
+<td>
+${order.deliveryDetails?.name || "Customer"}
+</td>
+
+<td>
+₹${order.total}
+</td>
+
+<td>
+
+<span style="
+padding:8px 15px;
+border-radius:20px;
+color:white;
+background:
+
+${
+order.status === "Delivered"
+? "#2a9d8f"
+
+: order.status === "Out for Delivery"
+? "#3a86ff"
+
+: order.status === "Packed"
+? "#ffb703"
+
+: "#fb8500"
+}
+">
+
+${order.status}
+
+</span>
+
+</td>
+
+<td>${date}</td>
+
+<td>
+
+<button
+class="btn pending"
+onclick="markPacked('${orderId}')">
+
+Packed
+
+</button>
+
+<button
+class="btn out"
+onclick="markOut('${orderId}')">
+
+Out
+
+</button>
+
+<button
+class="btn delivered"
+onclick="markDelivered('${orderId}')">
+
+Delivered
+
+</button>
+
+<button
+class="btn edit"
+onclick='viewOrder(${JSON.stringify(order)})'>
+
+View
+
+</button>
+
+<button
+class="btn delete"
+onclick="deleteOrder('${orderId}')">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById(
+"totalOrders"
+).innerText =
+totalOrders;
+
+document.getElementById(
+"pendingOrders"
+).innerText =
+pendingOrders;
+
+document.getElementById(
+"deliveredOrders"
+).innerText =
+deliveredOrders;
+
+document.getElementById(
+"totalRevenue"
+).innerText =
+`₹${totalRevenue}`;
+
+document.getElementById(
+"revenueValue"
+).innerText =
+`₹${totalRevenue}`;
+
+}
+);
+
+/* ========================= */
+/* STATUS */
+/* ========================= */
+
+window.markPacked =
+async function(id){
+
+await updateDoc(
+doc(db,"orders",id),
+{
+status:"Packed"
+}
+);
+
+}
+
+window.markOut =
+async function(id){
+
+await updateDoc(
+doc(db,"orders",id),
+{
+status:"Out for Delivery"
+}
+);
+
+}
+
+window.markDelivered =
+async function(id){
+
+await updateDoc(
+doc(db,"orders",id),
+{
+status:"Delivered"
+}
+);
+
+}
+
+window.deleteOrder =
+async function(id){
+
+const confirmDelete =
+confirm("Delete Order?");
+
+if(confirmDelete){
+
+await deleteDoc(
+doc(db,"orders",id)
+);
+
+}
+
+}
+
+/* ========================= */
+/* VIEW ORDER */
+/* ========================= */
+
+window.viewOrder =
+function(order){
+
+document.getElementById(
+"orderModal"
+).style.display = "flex";
+
+let productsHtml = "";
+
+(order.products || []).forEach((item)=>{
+
+productsHtml += `
+
+<li>
+${item.name}
+-
+Qty:
+${item.quantity || 1}
+</li>
+
+`;
+
+});
+
+document.getElementById(
+"modalContent"
+).innerHTML = `
+
+<p>
+<b>Name:</b>
+${order.deliveryDetails?.name || ""}
+</p>
+
+<br>
+
+<p>
+<b>Phone:</b>
+${order.deliveryDetails?.phone || ""}
+</p>
+
+<br>
+
+<p>
+<b>Address:</b>
+${order.deliveryDetails?.address || ""}
+</p>
+
+<br>
+
+<p>
+<b>City:</b>
+${order.deliveryDetails?.city || ""}
+</p>
+
+<br>
+
+<p>
+<b>Pincode:</b>
+${order.deliveryDetails?.pincode || ""}
+</p>
+
+<br>
+
+<p>
+<b>Status:</b>
+${order.status}
+</p>
+
+<br>
+<p>
+<b>Payment:</b>
+${order.paymentMethod}
+</p>
+
+<br>
+
+<p>
+<b>Total:</b>
+₹${order.total}
+</p>
+
+<br>
+
+<h3>
+Products:
+</h3>
+
+<ul>
+${productsHtml}
+</ul>
+<br>
+
+<button
+class="btn add"
+onclick='downloadInvoice(${JSON.stringify(order)})'>
+
+Download Invoice
+
+</button>
+
+`;
+
+}
+
+window.downloadInvoice = function(order){
+
+let products = "";
+
+(order.products || []).forEach(item=>{
+
+products += `
+${item.name}
+(Qty: ${item.quantity})
+- ₹${item.price * item.quantity}
+
+`;
+});
+
+const invoiceWindow =
+window.open("", "_blank");
+
+invoiceWindow.document.write(`
+
+<h1>Saudagar Farms Invoice</h1>
+
+<hr>
+
+<h3>Customer Details</h3>
+
+<p>
+Name:
+${order.deliveryDetails?.name || ""}
+</p>
+
+<p>
+Phone:
+${order.deliveryDetails?.phone || ""}
+</p>
+
+<p>
+Address:
+${order.deliveryDetails?.address || ""}
+</p>
+
+<p>
+Payment:
+${order.paymentMethod}
+</p>
+
+<hr>
+
+<h3>Products</h3>
+
+<pre>
+${products}
+</pre>
+
+<hr>
+
+<h2>
+Total:
+₹${order.total}
+</h2>
+
+`);
+
+invoiceWindow.print();
+
+}
+
+window.closeModal =
+function(){
+
+document.getElementById(
+"orderModal"
+).style.display = "none";
+
+}
+
+/* INITIAL */
+
+loadProducts();
+
+</script>
+</body>
+</html>

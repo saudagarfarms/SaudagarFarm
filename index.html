@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Saudagar Farms</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial;
+}
+
+body{
+    background:#f4f8f1;
+    overflow-x: hidden;
+}
+
+/* NAVBAR */
+
+.navbar{
+    background:linear-gradient(to right,#1d4d2c,#6d9f3d);
+    padding:20px 50px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    color:white;
+    flex-wrap:wrap;
+}
+
+.logo{
+    font-size:30px;
+    font-weight:bold;
+    color:#ffdd75;
+}
+
+.nav-links a{
+    color:white;
+    text-decoration:none;
+    margin-left:25px;
+    font-size:18px;
+}
+
+/* HERO */
+
+.hero{
+    height:400px;
+
+    background:
+    linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),
+    url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1974&auto=format&fit=crop');
+
+    background-size:cover;
+    background-position:center;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:white;
+    text-align:center;
+}
+
+.hero h1{
+    font-size:60px;
+    margin-bottom:15px;
+}
+
+.hero p{
+    font-size:22px;
+}
+
+/* PRODUCTS */
+
+.products-section{
+    padding:50px;
+}
+
+.products-section h2{
+    text-align:center;
+    margin-bottom:40px;
+    color:#234b2c;
+    font-size:40px;
+}
+
+.products-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+}
+
+.product-card{
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    transition:0.3s;
+}
+
+.product-card:hover{
+    transform:translateY(-8px);
+}
+
+.product-card img{
+    width:100%;
+    height:250px;
+    object-fit:cover;
+}
+
+.product-content{
+    padding:20px;
+}
+
+.product-content h3{
+    color:#234b2c;
+    margin-bottom:10px;
+}
+
+.product-content p{
+    color:#555;
+    margin-bottom:10px;
+}
+
+.price{
+    font-size:24px;
+    font-weight:bold;
+    color:#4CAF50;
+}
+
+.btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    background:#4CAF50;
+    color:white;
+    font-size:17px;
+    border-radius:10px;
+    cursor:pointer;
+    margin-top:15px;
+}
+
+.btn:hover{
+    background:#2e8b57;
+}
+
+/* EMPTY */
+
+.empty{
+    text-align:center;
+    font-size:25px;
+    color:#666;
+    grid-column:1/-1;
+}
+
+/* FOOTER */
+
+.footer{
+    background:#1d4d2c;
+    color:white;
+    text-align:center;
+    padding:20px;
+    margin-top:50px;
+    word-wrap: break-word;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+    .products-section{
+        padding: 20px;
+    }    
+
+    .hero h1{
+        font-size:40px;
+    }
+
+    .hero p{
+        font-size:18px;
+    }
+
+    .navbar{
+        padding:20px;
+    }
+
+    .nav-links{
+        margin-top:15px;
+    }
+
+    .nav-links a{
+        margin-left:10px;
+        font-size:15px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+
+    <div class="logo">
+        🌿 Saudagar Farms
+    </div>
+
+    <div class="nav-links">
+        <a href="#">Home</a>
+        <a href="profile.html">Profile</a>
+    
+        <a href="orders.html">My Orders</a>
+        <a href="cart.html">Cart</a>
+        <a href="login.html">Login</a>
+    </div>
+
+</div>
+
+<!-- HERO -->
+
+<div class="hero">
+
+    <div>
+        <h1>Fresh From Our Farms 🌱</h1>
+        <p>Organic Mangoes, Goats & Farm Products</p>
+    </div>
+
+</div>
+
+<!-- PRODUCTS -->
+
+<div class="products-section">
+
+    <h2> Our Products</h2>
+
+    <div class="products-grid" id="productsGrid">
+
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+
+<div class="footer">
+    © 2026 Saudagar Farms | Freshness Delivered 🌿
+</div>
+
+<!-- FIREBASE -->
+
+<script type="module">
+
+import { db } from './js/firebase.js';
+
+import {
+collection,
+getDocs
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+const productsGrid =
+document.getElementById("productsGrid");
+
+
+/* LOAD PRODUCTS */
+
+async function loadProducts(){
+
+    try{
+
+        productsGrid.innerHTML = "";
+
+        const querySnapshot =
+        await getDocs(collection(db,"products"));
+
+
+        if(querySnapshot.empty){
+
+            productsGrid.innerHTML = `
+            <div class="empty">
+                No Products Available 🌱
+            </div>
+            `;
+
+            return;
+        }
+
+
+        querySnapshot.forEach((doc)=>{
+
+            const product = doc.data();
+
+            productsGrid.innerHTML += `
+
+            <div class="product-card">
+
+                <img
+                src="${product.image}"
+                alt="${product.name}"
+
+                onerror="
+                this.src='https://via.placeholder.com/300x250?text=Saudagar+Farms'
+                ">
+
+                <div class="product-content">
+
+                    <h3>${product.name}</h3>
+
+                    <p>${product.description}</p>
+
+                    <div class="price">
+                        ₹${product.price}
+                    </div>
+
+                    <button
+                    class="btn"
+
+                    onclick='openProductPage("${product.name}")'>
+                    
+                    
+                    
+                    
+                
+
+                    View Product
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            `;
+
+        });
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+        productsGrid.innerHTML = `
+        <div class="empty">
+            Error Loading Products ❌
+        </div>
+        `;
+
+    }
+
+}
+
+
+/* ADD TO CART */
+
+window.addToCart = function(id,name,price,image){
+
+    let cart =
+    JSON.parse(localStorage.getItem("cart")) || [];
+
+
+    const existingProduct =
+    cart.find(item => item.id === id);
+
+
+    if(existingProduct){
+
+        existingProduct.quantity += 1;
+
+    }
+
+    else{
+
+        cart.push({
+
+            id,
+            name,
+            price,
+            image,
+            quantity:1
+
+        });
+
+    }
+
+
+    localStorage.setItem(
+    "cart",
+    JSON.stringify(cart)
+    );
+
+
+    alert("✅ Product Added To Cart");
+
+}
+
+/* OPEN PRODUCT PAGE */
+
+window.openProductPage = function(productName){
+
+    const name = productName.toLowerCase();
+
+    if(name.includes("daseri")){
+        window.location.href = "daseri.html";
+    }
+
+    else if(name.includes("himayat")){
+        window.location.href = "himayat.html";
+    }
+
+    else{
+        alert("Product Page Not Available");
+    }
+
+}
+
+
+/* INITIAL LOAD */
+
+loadProducts();
+
+</script>
+
+</body>
+</html>
