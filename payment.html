@@ -381,7 +381,8 @@ window.location.href =
 
 window.payOnline = 
 async function(){
-
+console.log("Payment Clicked");
+console.log(totalAmount);
 let response;
 
 try{
@@ -413,6 +414,8 @@ return;
 }
 
 const order = await response.json();
+console.log(order);
+alert(JSON.stringify(order));
 
 const options = {
 key: "rzp_test_Sp8cEV0iWpweoq",
