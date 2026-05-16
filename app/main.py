@@ -18,8 +18,8 @@ app.add_middleware(
 
 client = razorpay.Client(
     auth=(
-        "rzp_test_Sp8cEV0iWpweoq",
-        "K7tbHHEY348sSmDNMMiMUxCq"
+        os.getenv("RAZORPAY_KEY_ID"),
+        os.getenv("RAZORPAY_KEY_SECRET")
     )
 )
 
