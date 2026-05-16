@@ -386,7 +386,7 @@ let response;
 
 try{
 
-response = await fetch("http://127.0.0.1:8000/create-order", {
+response = await fetch("https://saudagarfarm.onrender.com/create-order", {
 
 method: "POST",
 
@@ -425,7 +425,7 @@ order_id: order.id,
 /* 🔥 ONLY HANDLER CHANGED */
 handler: async function (response) {
 
-const verifyRes = await fetch("http://127.0.0.1:8000/verify-payment", {
+const verifyRes = await fetch("https://saudagarfarm.onrender.com/verify-payment", {
 method: "POST",
 headers: {
 "Content-Type": "application/json"
