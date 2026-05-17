@@ -857,16 +857,91 @@ loadProducts();
 window.editPrice =
 async function(id){
 
-const newPrice =
-prompt("Enter New Price");
+const productRef =
+doc(db,"products",id);
 
-if(!newPrice) return;
+const productSnap =
+await getDoc(productRef);
+
+const product =
+productSnap.data();
+
+/* NAME */
+
+const newName =
+prompt(
+"Edit Product Name",
+product.name
+);
+
+if(newName === null) return;
+
+/* CATEGORY */
+
+const newCategory =
+prompt(
+"Edit Category",
+product.category
+);
+
+if(newCategory === null) return;
+
+/* DESCRIPTION */
+
+const newDescription =
+prompt(
+"Edit Description",
+product.description
+);
+
+if(newDescription === null) return;
+
+/* PRICE */
+
+const newPrice =
+prompt(
+"Edit Price",
+product.price
+);
+
+if(newPrice === null) return;
+
+/* IMAGE */
+
+const newImage =
+prompt(
+"Edit Image URL",
+product.image
+);
+
+if(newImage === null) return;
+
+/* STATUS */
+
+const newStatus =
+prompt(
+"Edit Status (Available/Out Of Stock)",
+product.status
+);
+
+if(newStatus === null) return;
+
+/* UPDATE */
 
 await updateDoc(
-doc(db,"products",id),
+productRef,
 {
-price:Number(newPrice)
+name:newName,
+category:newCategory,
+description:newDescription,
+price:Number(newPrice),
+image:newImage,
+status:newStatus
 }
+);
+
+alert(
+"✅ Product Updated"
 );
 
 loadProducts();
